@@ -4,157 +4,221 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ヘルトウクンØ - リモートメモツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;600;800&family=Geist+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Geist', 'sans-serif'],
+                        mono: ['Geist Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .grid-cell { transition: all 0.15s ease; }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #080c14;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(249, 115, 22, 0.08) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+        }
+        .grid-cell { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cyber-panel {
+            background: rgba(13, 20, 35, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.4);
+        }
+        .scanline {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.15) 50%,
+                rgba(0, 0, 0, 0.15)
+            );
+            background-size: 100% 4px;
+        }
+        .diagonal-stripes {
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(51, 65, 85, 0.1),
+                rgba(51, 65, 85, 0.1) 6px,
+                rgba(15, 23, 42, 0.3) 6px,
+                rgba(15, 23, 42, 0.3) 12px
+            );
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-2 sm:p-4 select-none">
+<body class="text-slate-200 min-h-screen font-sans p-2 sm:p-4 select-none scanline">
 
-    <div class="max-w-md mx-auto bg-slate-800 rounded-xl shadow-2xl border border-slate-700 p-4 space-y-4">
+    <div class="max-w-md mx-auto cyber-panel rounded-2xl shadow-2xl p-4 space-y-4">
         
-        <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-            <h1 class="text-base font-bold tracking-wider text-orange-500 flex items-center gap-1">
-                🤖 HERZTAUKUN Ø MEMO
-            </h1>
-            <button onclick="resetAll()" class="bg-red-700 hover:bg-red-600 text-[11px] px-2 py-1 rounded border border-red-500 transition font-bold">
-                全リセット
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></div>
+                <h1 class="text-xs font-mono font-bold tracking-widest text-orange-500 uppercase">
+                    HERZTOUKUN Ø // MEMO SYS
+                </h1>
+            </div>
+            <button onclick="resetAll()" class="border border-red-500/30 bg-red-950/20 text-red-400 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:bg-red-900/30 hover:border-red-500/50 active:scale-95 transition">
+                SYSTEM RESET
             </button>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 bg-slate-850 p-2 rounded border border-slate-700 bg-slate-900/40">
+        <div class="grid grid-cols-2 gap-3 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80">
             <div>
-                <div class="text-[10px] font-bold text-slate-400 mb-1">敵施設アンテナ (目標: 3基以下)</div>
-                <div class="space-y-1 text-xs">
-                    <div class="flex items-center space-x-1.5">
-                        <span class="w-4 font-bold text-red-400 text-center">A</span>
-                        <button id="ant-a-1" onclick="toggleAntenna('a', 1)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-a-2" onclick="toggleAntenna('a', 2)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-a-3" onclick="toggleAntenna('a', 3)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
+                <div class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-2">ANTENNA MONITOR (TARGET &le; 3)</div>
+                <div class="space-y-1.5 font-mono text-xs">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 font-bold text-rose-500 text-center">A</span>
+                        <button id="ant-a-1" onclick="toggleAntenna('a', 1)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-a-2" onclick="toggleAntenna('a', 2)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-a-3" onclick="toggleAntenna('a', 3)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
                     </div>
-                    <div class="flex items-center space-x-1.5">
-                        <span class="w-4 font-bold text-yellow-400 text-center">B</span>
-                        <button id="ant-b-1" onclick="toggleAntenna('b', 1)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-b-2" onclick="toggleAntenna('b', 2)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-b-3" onclick="toggleAntenna('b', 3)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 font-bold text-amber-500 text-center">B</span>
+                        <button id="ant-b-1" onclick="toggleAntenna('b', 1)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-b-2" onclick="toggleAntenna('b', 2)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-b-3" onclick="toggleAntenna('b', 3)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
                     </div>
-                    <div class="flex items-center space-x-1.5">
-                        <span class="w-4 font-bold text-blue-400 text-center">C</span>
-                        <button id="ant-c-1" onclick="toggleAntenna('c', 1)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-c-2" onclick="toggleAntenna('c', 2)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
-                        <button id="ant-c-3" onclick="toggleAntenna('c', 3)" class="w-6 h-6 bg-green-600 rounded border border-green-500 font-bold">📡</button>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 font-bold text-blue-500 text-center">C</span>
+                        <button id="ant-c-1" onclick="toggleAntenna('c', 1)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-c-2" onclick="toggleAntenna('c', 2)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
+                        <button id="ant-c-3" onclick="toggleAntenna('c', 3)" class="w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer"></button>
                     </div>
                 </div>
-                <div id="antenna-count" class="text-[11px] mt-1 text-emerald-400 font-bold">敵の残りアンテナ: 9基</div>
+                <div id="antenna-count" class="text-[9px] font-mono mt-2 text-emerald-400 font-bold tracking-wider">SYSTEM STATUS // ACTIVE ANTENNAS: 9/9</div>
             </div>
 
             <div>
-                <div class="text-[10px] font-bold text-slate-400 mb-1">妨害操作 (各方位1回)</div>
-                <div class="grid grid-cols-2 gap-1 text-center">
-                    <button id="jam-N" onclick="toggleJam('N')" class="bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded border border-slate-600 font-bold">N (北)</button>
-                    <button id="jam-E" onclick="toggleJam('E')" class="bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded border border-slate-600 font-bold">E (東)</button>
-                    <button id="jam-W" onclick="toggleJam('W')" class="bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded border border-slate-600 font-bold">W (西)</button>
-                    <button id="jam-S" onclick="toggleJam('S')" class="bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded border border-slate-600 font-bold">S (南)</button>
+                <div class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider mb-2">JAMMING DEVICE (ONCE PER DIR)</div>
+                <div class="grid grid-cols-2 gap-1 text-center font-mono">
+                    <button id="jam-N" onclick="toggleJam('N')" class="bg-slate-800 border-slate-700 text-slate-300 text-xs py-1.5 rounded border font-bold hover:border-orange-500/30 hover:bg-slate-750 active:scale-95 transition">N</button>
+                    <button id="jam-E" onclick="toggleJam('E')" class="bg-slate-800 border-slate-700 text-slate-300 text-xs py-1.5 rounded border font-bold hover:border-orange-500/30 hover:bg-slate-750 active:scale-95 transition">E</button>
+                    <button id="jam-W" onclick="toggleJam('W')" class="bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs py-1.5 rounded border border-slate-650 font-bold hover:border-orange-500/30 hover:bg-slate-750 active:scale-95 transition">W</button>
+                    <button id="jam-S" onclick="toggleJam('S')" class="bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs py-1.5 rounded border border-slate-650 font-bold hover:border-orange-500/30 hover:bg-slate-750 active:scale-95 transition">S</button>
                 </div>
             </div>
         </div>
 
         <div>
             <div class="flex justify-between items-center mb-1">
-                <span class="text-[10px] font-bold text-slate-400">推理マップ (タップでメモ状態切替)</span>
-                <button onclick="toggleMapVisibility()" id="btn-map-toggle" class="bg-slate-700 hover:bg-slate-600 text-[10px] px-2 py-0.5 rounded border border-slate-600 transition">
+                <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider">REASONING MAP</span>
+                <button onclick="toggleMapVisibility()" id="btn-map-toggle" class="bg-slate-800 hover:bg-slate-750 text-slate-400 border border-slate-700 text-[9px] px-2 py-0.5 rounded transition font-mono uppercase tracking-wider">
                     隠す
                 </button>
             </div>
-            <div id="map-area" class="transition duration-300">
-                <div class="grid grid-cols-5 gap-1 bg-slate-950 p-2 rounded border border-slate-800 text-center text-sm font-bold">
-                    <div class="text-slate-500 text-[10px] flex items-center justify-center font-normal">マーク</div>
-                    <div class="text-slate-400 flex items-center justify-center">1</div>
-                    <div class="text-slate-400 flex items-center justify-center">2</div>
-                    <div class="text-slate-400 flex items-center justify-center">3</div>
-                    <div class="text-slate-400 flex items-center justify-center">4</div>
+            
+            <div class="relative overflow-hidden rounded-lg border border-slate-800/80 bg-slate-950/40">
+                <div id="map-area" class="p-2 transition duration-300">
+                    <div class="grid grid-cols-5 gap-1 text-center text-xs font-bold">
+                        <div class="text-slate-600 text-[8px] flex items-center justify-center font-mono uppercase tracking-wider font-normal">TYPE</div>
+                        <div class="text-slate-500 font-mono flex items-center justify-center">1</div>
+                        <div class="text-slate-500 font-mono flex items-center justify-center">2</div>
+                        <div class="text-slate-500 font-mono flex items-center justify-center">3</div>
+                        <div class="text-slate-500 font-mono flex items-center justify-center">4</div>
 
-                    <div class="text-green-500 text-lg flex items-center justify-center">♣</div>
-                    <button id="cell-C-1" onclick="cycleCell('C', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-C-2" onclick="cycleCell('C', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-C-3" onclick="cycleCell('C', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-C-4" onclick="cycleCell('C', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                        <div class="text-emerald-500 text-lg flex items-center justify-center font-normal">&#9827;</div>
+                        <button id="cell-C-1" onclick="cycleCell('C', 1)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-C-2" onclick="cycleCell('C', 2)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-C-3" onclick="cycleCell('C', 3)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-C-4" onclick="cycleCell('C', 4)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
 
-                    <div class="text-red-400 text-lg flex items-center justify-center">♦</div>
-                    <button id="cell-D-1" onclick="cycleCell('D', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-D-2" onclick="cycleCell('D', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-D-3" onclick="cycleCell('D', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-D-4" onclick="cycleCell('D', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                        <div class="text-rose-500 text-lg flex items-center justify-center font-normal">&#9830;</div>
+                        <button id="cell-D-1" onclick="cycleCell('D', 1)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-D-2" onclick="cycleCell('D', 2)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-D-3" onclick="cycleCell('D', 3)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-D-4" onclick="cycleCell('D', 4)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
 
-                    <div class="text-red-500 text-lg flex items-center justify-center">♥</div>
-                    <button id="cell-H-1" onclick="cycleCell('H', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-H-2" onclick="cycleCell('H', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-H-3" onclick="cycleCell('H', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-H-4" onclick="cycleCell('H', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                        <div class="text-rose-600 text-lg flex items-center justify-center font-normal">&#9829;</div>
+                        <button id="cell-H-1" onclick="cycleCell('H', 1)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-H-2" onclick="cycleCell('H', 2)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-H-3" onclick="cycleCell('H', 3)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-H-4" onclick="cycleCell('H', 4)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
 
-                    <div class="text-indigo-400 text-lg flex items-center justify-center">♠</div>
-                    <button id="cell-S-1" onclick="cycleCell('S', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-S-2" onclick="cycleCell('S', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-S-3" onclick="cycleCell('S', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                    <button id="cell-S-4" onclick="cycleCell('S', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                        <div class="text-blue-500 text-lg flex items-center justify-center font-normal">&#9824;</div>
+                        <button id="cell-S-1" onclick="cycleCell('S', 1)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-S-2" onclick="cycleCell('S', 2)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-S-3" onclick="cycleCell('S', 3)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                        <button id="cell-S-4" onclick="cycleCell('S', 4)" class="grid-cell h-9 bg-slate-900/50 rounded border border-slate-800 flex items-center justify-center text-xs cursor-pointer hover:border-slate-700"></button>
+                    </div>
+                    
+                    <div class="flex justify-between text-[9px] text-slate-500 px-1 mt-2.5 font-mono uppercase tracking-wider">
+                        <span>[ ] UNKNOWN</span>
+                        <span>[x] SAFE</span>
+                        <span>[?] SUSPECT</span>
+                        <span>[!] TARGET</span>
+                        <span>[o] TRACE</span>
+                    </div>
                 </div>
-                <div class="flex justify-between text-[10px] text-slate-400 px-1 mt-1 font-mono">
-                    <span>[無印]未確定</span>
-                    <span>[灰/×]安全</span>
-                    <span>[黄/？]候補</span>
-                    <span>[赤/！]確定</span>
-                    <span>[青/👣]通過</span>
+                
+                <div id="map-mask-text" class="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-wider text-amber-500/70 bg-slate-950/80 pointer-events-none select-none hidden">
+                    MAP OFFLINE // RESTORE CONNECTION
                 </div>
             </div>
         </div>
 
-        <div class="bg-slate-850 p-2 rounded border border-slate-700 bg-slate-900/40 space-y-1">
+        <div class="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 space-y-2">
             <div class="flex justify-between items-center">
-                <span class="text-[10px] font-bold text-slate-400">自分の基地座標 (相手に見せないよう管理)</span>
-                <button onclick="togglePasswordVisibility()" id="btn-pw-toggle" class="bg-slate-700 hover:bg-slate-600 text-[10px] px-2 py-0.5 rounded border border-slate-600 transition">
+                <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider">LOCAL DATA ENCRYPTION (FACILITY KEY)</span>
+                <button onclick="togglePasswordVisibility()" id="btn-pw-toggle" class="bg-slate-800 hover:bg-slate-750 text-slate-400 border border-slate-700 text-[9px] px-2 py-0.5 rounded transition font-mono uppercase tracking-wider">
                     表示する
                 </button>
             </div>
-            <div id="password-area" class="grid grid-cols-3 gap-2 blur-md pointer-events-none transition duration-300">
-                <div>
-                    <label class="text-[9px] text-slate-400 block text-center">基地A</label>
-                    <input type="text" id="my-pw-a" placeholder="例: ♣2" class="w-full bg-slate-950 border border-slate-700 rounded text-xs p-1 text-center text-white font-bold">
+            
+            <div class="relative overflow-hidden rounded-lg border border-slate-800/50 bg-slate-950/50">
+                <div id="password-area" class="grid grid-cols-3 gap-2 p-2 transition duration-300 blur-md pointer-events-none opacity-20">
+                    <div>
+                        <label class="text-[8px] font-mono text-slate-500 block text-center uppercase tracking-wider mb-1">BASE A</label>
+                        <input type="text" id="my-pw-a" placeholder="C-2" class="w-full bg-slate-950 border border-slate-850 rounded text-xs p-1.5 text-center text-white font-mono focus:border-orange-500/30 focus:ring-0">
+                    </div>
+                    <div>
+                        <label class="text-[8px] font-mono text-slate-500 block text-center uppercase tracking-wider mb-1">BASE B</label>
+                        <input type="text" id="my-pw-b" placeholder="H-4" class="w-full bg-slate-950 border border-slate-850 rounded text-xs p-1.5 text-center text-white font-mono focus:border-orange-500/30 focus:ring-0">
+                    </div>
+                    <div>
+                        <label class="text-[8px] font-mono text-slate-500 block text-center uppercase tracking-wider mb-1">BASE C</label>
+                        <input type="text" id="my-pw-c" placeholder="S-1" class="w-full bg-slate-950 border border-slate-850 rounded text-xs p-1.5 text-center text-white font-mono focus:border-orange-500/30 focus:ring-0">
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[9px] text-slate-400 block text-center">基地B</label>
-                    <input type="text" id="my-pw-b" placeholder="例: ♥4" class="w-full bg-slate-950 border border-slate-700 rounded text-xs p-1 text-center text-white font-bold">
-                </div>
-                <div>
-                    <label class="text-[9px] text-slate-400 block text-center">基地C</label>
-                    <input type="text" id="my-pw-c" placeholder="例: ♠1" class="w-full bg-slate-950 border border-slate-700 rounded text-xs p-1 text-center text-white font-bold">
+                
+                <div id="password-mask-text" class="absolute inset-0 flex items-center justify-center font-mono text-[9px] tracking-wider text-rose-500/70 bg-slate-950/40 pointer-events-none select-none">
+                    LOCKED // DECRYPT REQUIRED
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-3">
             <div>
-                <label class="text-[10px] font-bold text-slate-400 block mb-1">敵パスワード予想</label>
+                <label class="text-[9px] font-mono font-bold text-slate-500 block mb-1.5 uppercase tracking-wider">TARGET PATH ANALYSIS</label>
                 <div class="space-y-1">
-                    <input type="text" id="enemy-try-1" placeholder="1st: A-B-C" class="w-full bg-slate-950 border border-slate-700 rounded p-1 text-xs text-white">
-                    <input type="text" id="enemy-try-2" placeholder="2nd: A-B-C" class="w-full bg-slate-950 border border-slate-700 rounded p-1 text-xs text-white">
+                    <input type="text" id="enemy-try-1" placeholder="1st TRY (e.g. C2-H4-S1)" class="w-full bg-slate-950 border border-slate-850 rounded p-1.5 text-xs text-white font-mono focus:border-orange-500/30 focus:ring-0">
+                    <input type="text" id="enemy-try-2" placeholder="2nd TRY (e.g. D3-S4-H1)" class="w-full bg-slate-950 border border-slate-850 rounded p-1.5 text-xs text-white font-mono focus:border-orange-500/30 focus:ring-0">
                 </div>
             </div>
             <div>
-                <label class="text-[10px] font-bold text-slate-400 block mb-1">自由メモ (思考ログ用)</label>
-                <textarea id="free-memo" rows="2" placeholder="3T移動でヒット、等" class="w-full bg-slate-950 border border-slate-700 rounded text-xs p-1 h-[53px] text-white resize-none"></textarea>
+                <label class="text-[9px] font-mono font-bold text-slate-500 block mb-1.5 uppercase tracking-wider">TACTICAL LOG</label>
+                <textarea id="free-memo" rows="2" placeholder="Turn 3: Enemy moved East, no damage detected..." class="w-full bg-slate-950 border border-slate-850 rounded text-xs p-1.5 h-[58px] text-white resize-none font-mono focus:border-orange-500/30 focus:ring-0"></textarea>
             </div>
         </div>
 
     </div>
 
     <script>
-        // セルのサイクル状態定義
+        // セルのサイクル状態定義 (絵文字を美しいSVG・フォントシンボルに刷新)
         const STATES = [
-            { text: '',   bg: 'bg-slate-800', border: 'border-slate-700', textCol: 'text-slate-100' },
-            { text: '×',  bg: 'bg-slate-700', border: 'border-slate-600', textCol: 'text-slate-400' },
-            { text: '？', bg: 'bg-yellow-600', border: 'border-yellow-500', textCol: 'text-slate-950' },
-            { text: '！', bg: 'bg-red-600', border: 'border-red-500', textCol: 'text-white font-black' },
-            { text: '👣', bg: 'bg-blue-600', border: 'border-blue-500', textCol: 'text-white' }
+            { html: '',   bg: 'bg-slate-900/50', border: 'border-slate-800', textCol: 'text-slate-500' },
+            { html: '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>',  bg: 'bg-slate-950/80 diagonal-stripes opacity-30', border: 'border-slate-900', textCol: 'text-slate-600' },
+            { html: '<span class="font-mono text-xs">?</span>', bg: 'bg-amber-500/10', border: 'border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.1)]', textCol: 'text-amber-400' },
+            { html: '<span class="font-mono text-xs font-black">!</span>', bg: 'bg-rose-500/20', border: 'border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.2)]', textCol: 'text-rose-400' },
+            { html: '<svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>', bg: 'bg-blue-500/10', border: 'border-blue-500/30 shadow-[0_0_8px_rgba(59,130,246,0.1)]', textCol: 'text-blue-400' }
         ];
         
         const mapData = {};
@@ -200,8 +264,8 @@
             const el = document.getElementById(`cell-${key}`);
             if(!el) return;
             
-            el.className = `grid-cell h-10 rounded border flex items-center justify-center text-xs font-bold cursor-pointer ${state.bg} ${state.border} ${state.textCol}`;
-            el.innerText = state.text;
+            el.className = `grid-cell h-9 rounded border flex items-center justify-center cursor-pointer hover:border-slate-700 active:scale-95 ${state.bg} ${state.border} ${state.textCol}`;
+            el.innerHTML = state.html;
         }
 
         // アンテナタップ時処理
@@ -217,15 +281,15 @@
             if(!el) return;
             
             if(isAlive) {
-                el.className = "w-6 h-6 bg-green-600 rounded border border-green-500 font-bold text-xs cursor-pointer";
-                el.innerText = "📡";
+                el.className = "w-7 h-7 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/30 font-bold text-xs flex items-center justify-center cursor-pointer hover:bg-emerald-500/20 active:scale-90 transition";
+                el.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H7M19 9H5M21 13H3"/><circle cx="12" cy="2" r="1" fill="currentColor"/></svg>`;
             } else {
-                el.className = "w-6 h-6 bg-slate-700 text-slate-500 rounded border border-slate-600 text-xs font-bold flex items-center justify-center cursor-pointer";
-                el.innerText = "×";
+                el.className = "w-7 h-7 bg-slate-950 text-slate-700 rounded border border-slate-900 text-xs font-bold flex items-center justify-center cursor-pointer hover:bg-slate-900/50 active:scale-90 transition";
+                el.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
             }
         }
 
-        // 残りアンテナ計算と勝利通知
+        // 残りアンテナ計算と勝利通知 (ハッカーテイストの警告文言)
         function updateAntennaCount() {
             let count = 0;
             ['a','b','c'].forEach(f => {
@@ -234,11 +298,11 @@
             
             const el = document.getElementById('antenna-count');
             if(count <= 3) {
-                el.className = "text-[11px] mt-1 text-red-400 font-bold animate-pulse";
-                el.innerText = `敵の残りアンテナ: ${count}基 (勝利条件達成！🚨)`;
+                el.className = "text-[9px] font-mono mt-2 text-rose-500 font-bold tracking-wider animate-pulse";
+                el.innerText = `ALERT // CRITICAL ANOMALY // ACTIVE ANTENNAS: ${count}/9`;
             } else {
-                el.className = "text-[11px] mt-1 text-emerald-400 font-bold";
-                el.innerText = `敵の残りアンテナ: ${count}基`;
+                el.className = "text-[9px] font-mono mt-2 text-emerald-400 font-bold tracking-wider";
+                el.innerText = `SYSTEM STATUS // ACTIVE ANTENNAS: ${count}/9`;
             }
         }
 
@@ -254,9 +318,9 @@
             if(!el) return;
             
             if(isUsed) {
-                el.className = "bg-slate-800 text-slate-500 text-xs py-1.5 rounded border border-slate-700 line-through font-normal cursor-pointer";
+                el.className = "bg-slate-950 text-slate-600 border border-slate-900 text-xs py-1.5 rounded diagonal-stripes line-through font-normal cursor-pointer transition";
             } else {
-                el.className = "bg-slate-700 hover:bg-slate-600 text-xs py-1.5 rounded border border-slate-600 font-bold text-slate-100 cursor-pointer";
+                el.className = "bg-slate-800 border-slate-700 text-slate-300 text-xs py-1.5 rounded border font-bold hover:border-orange-500/30 hover:bg-slate-750 active:scale-95 cursor-pointer transition";
             }
         }
 
@@ -265,15 +329,22 @@
             mapVisible = !mapVisible;
             const area = document.getElementById('map-area');
             const btn = document.getElementById('btn-map-toggle');
+            const maskText = document.getElementById('map-mask-text');
             
             if(mapVisible) {
-                area.classList.remove('blur-md', 'pointer-events-none');
+                area.classList.remove('blur-md', 'pointer-events-none', 'opacity-10');
+                maskText.classList.add('hidden');
                 btn.innerText = "隠す";
-                btn.classList.replace('bg-orange-700', 'bg-slate-700');
+                btn.classList.replace('bg-orange-500/20', 'bg-slate-800');
+                btn.classList.replace('border-orange-500/40', 'border-slate-700');
+                btn.classList.remove('text-orange-400');
             } else {
-                area.classList.add('blur-md', 'pointer-events-none');
+                area.classList.add('blur-md', 'pointer-events-none', 'opacity-10');
+                maskText.classList.remove('hidden');
                 btn.innerText = "表示する";
-                btn.classList.replace('bg-slate-700', 'bg-orange-700');
+                btn.classList.replace('bg-slate-800', 'bg-orange-500/20');
+                btn.classList.replace('border-slate-700', 'border-orange-500/40');
+                btn.classList.add('text-orange-400');
             }
         }
 
@@ -282,15 +353,22 @@
             passwordVisible = !passwordVisible;
             const area = document.getElementById('password-area');
             const btn = document.getElementById('btn-pw-toggle');
+            const maskText = document.getElementById('password-mask-text');
             
             if(passwordVisible) {
-                area.classList.remove('blur-md', 'pointer-events-none');
+                area.classList.remove('blur-md', 'pointer-events-none', 'opacity-20');
+                maskText.classList.add('hidden');
                 btn.innerText = "隠す";
-                btn.classList.replace('bg-slate-700', 'bg-orange-700');
+                btn.classList.replace('bg-slate-800', 'bg-orange-500/20');
+                btn.classList.replace('border-slate-700', 'border-orange-500/40');
+                btn.classList.add('text-orange-400');
             } else {
-                area.classList.add('blur-md', 'pointer-events-none');
+                area.classList.add('blur-md', 'pointer-events-none', 'opacity-20');
+                maskText.classList.remove('hidden');
                 btn.innerText = "表示する";
-                btn.classList.replace('bg-orange-700', 'bg-slate-700');
+                btn.classList.replace('bg-orange-500/20', 'bg-slate-800');
+                btn.classList.replace('border-orange-500/40', 'border-slate-700');
+                btn.classList.remove('text-orange-400');
             }
         }
 
