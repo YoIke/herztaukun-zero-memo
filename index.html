@@ -397,6 +397,20 @@
                 const eventType = el.tagName === 'SELECT' ? 'change' : 'input';
                 el.removeEventListener(eventType, saveToLocalStorage);
                 el.addEventListener(eventType, saveToLocalStorage);
+                
+                // 自軍基地が変更された場合はマップ表示を即座に同期
+                if (id.startsWith('my-pw-')) {
+                    el.addEventListener('change', updateAllCells);
+                }
+            });
+        }
+
+        // マップ全セルの同期再描画
+        function updateAllCells() {
+            marks.forEach(m => {
+                for(let i=1; i<=4; i++) {
+                    updateCellDOM(m, i);
+                }
             });
         }
 
@@ -415,8 +429,28 @@
             const el = document.getElementById(`cell-${key}`);
             if(!el) return;
             
-            el.className = `grid-cell h-9 rounded border flex items-center justify-center cursor-pointer hover:border-slate-700 active:scale-95 ${state.bg} ${state.border} ${state.textCol}`;
-            el.innerHTML = state.html;
+            el.className = `grid-cell h-9 rounded border flex items-center justify-center cursor-pointer hover:border-slate-700 active:scale-95 relative ${state.bg} ${state.border} ${state.textCol}`;
+            
+            let html = state.html;
+            
+            // 自軍基地インジケータのオーバーレイ (パスワード表示ONの時のみ)
+            if (passwordVisible) {
+                const pwA = document.getElementById('my-pw-a').value;
+                const pwB = document.getElementById('my-pw-b').value;
+                const pwC = document.getElementById('my-pw-c').value;
+                
+                let bases = [];
+                if (pwA === key) bases.push('A');
+                if (pwB === key) bases.push('B');
+                if (pwC === key) bases.push('C');
+                
+                if (bases.length > 0) {
+                    const label = bases.join('+');
+                    html += `<span class="absolute bottom-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-orange-500/90 text-slate-950 shadow-[0_0_8px_rgba(249,115,22,0.4)] leading-none">${label}</span>`;
+                }
+            }
+            
+            el.innerHTML = html;
         }
 
         // アンテナタップ時処理
@@ -525,6 +559,7 @@
                 btn.classList.remove('text-orange-400');
             }
             if (!skipSave) saveToLocalStorage();
+            updateAllCells();
         }
 
         // オールリセット
