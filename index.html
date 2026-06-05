@@ -57,7 +57,7 @@
 </head>
 <body class="text-slate-200 min-h-screen font-sans p-2 sm:p-4 select-none scanline">
 
-    <div class="max-w-md mx-auto cyber-panel rounded-2xl shadow-2xl p-4 space-y-4">
+    <div id="main-container" class="max-w-md mx-auto cyber-panel rounded-2xl shadow-2xl p-4 space-y-4 transition-all duration-500">
         
         <div class="flex justify-between items-center border-b border-slate-800 pb-3">
             <div class="flex items-center space-x-2">
@@ -66,9 +66,14 @@
                     HERZTOUKUN Ø // MEMO SYS
                 </h1>
             </div>
-            <button onclick="resetAll()" class="border border-red-500/30 bg-red-950/20 text-red-400 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:bg-red-900/30 hover:border-red-500/50 active:scale-95 transition">
-                SYSTEM RESET
-            </button>
+            <div class="flex items-center space-x-1.5">
+                <button id="btn-sound-toggle" onclick="toggleSound()" class="border border-slate-800 bg-slate-950 text-slate-500 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:border-slate-700 active:scale-95 transition">
+                    SOUND [OFF]
+                </button>
+                <button onclick="resetAll()" class="border border-red-500/30 bg-red-950/20 text-red-400 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:bg-red-900/30 hover:border-red-500/50 active:scale-95 transition">
+                    SYSTEM RESET
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80">
@@ -301,6 +306,97 @@
         // --- LOCAL STORAGE PERSISTENCE ---
         const STORAGE_KEY = 'herztoukun_memo_state';
 
+        // --- AUDIO / SYNTHESIZER (WEB AUDIO API) ---
+        let audioCtx = null;
+        let isSoundEnabled = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playBeep(type) {
+            if (!isSoundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1000, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'toggle') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(700, now);
+                    osc.frequency.setValueAtTime(900, now + 0.03);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                    osc.start(now);
+                    osc.stop(now + 0.07);
+                } else if (type === 'alert') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(120, now + 0.15);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'decrypt') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.setValueAtTime(1300, now + 0.08);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+                    osc.start(now);
+                    osc.stop(now + 0.18);
+                } else if (type === 'reset') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(500, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.35);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch (e) {
+                console.error("Audio error:", e);
+            }
+        }
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            updateSoundDOM();
+            saveToLocalStorage();
+            if (isSoundEnabled) {
+                initAudio();
+                playBeep('click');
+            }
+        }
+
+        function updateSoundDOM() {
+            const btn = document.getElementById('btn-sound-toggle');
+            if (!btn) return;
+            if (isSoundEnabled) {
+                btn.className = "border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:bg-emerald-900/30 hover:border-emerald-500/50 active:scale-95 transition shadow-[0_0_8px_rgba(16,185,129,0.1)]";
+                btn.innerText = "SOUND [ON]";
+            } else {
+                btn.className = "border border-slate-800 bg-slate-950 text-slate-500 text-[10px] px-2.5 py-1 rounded font-mono uppercase tracking-wider hover:border-slate-700 active:scale-95 transition";
+                btn.innerText = "SOUND [OFF]";
+            }
+        }
+
         function saveToLocalStorage() {
             const state = {
                 mapData,
@@ -308,6 +404,7 @@
                 jammingData,
                 passwordVisible,
                 mapVisible,
+                isSoundEnabled,
                 inputs: {
                     myPwA: document.getElementById('my-pw-a').value,
                     myPwB: document.getElementById('my-pw-b').value,
@@ -334,6 +431,7 @@
                 Object.assign(jammingData, state.jammingData);
                 passwordVisible = state.passwordVisible;
                 mapVisible = state.mapVisible;
+                isSoundEnabled = state.isSoundEnabled || false;
                 
                 document.getElementById('my-pw-a').value = state.inputs.myPwA || '';
                 document.getElementById('my-pw-b').value = state.inputs.myPwB || '';
@@ -345,6 +443,8 @@
                 document.getElementById('enemy-try-2-b').value = state.inputs.enemyTry2b || '';
                 document.getElementById('enemy-try-2-c').value = state.inputs.enemyTry2c || '';
                 document.getElementById('free-memo').value = state.inputs.freeMemo || '';
+                
+                updateSoundDOM();
                 return true;
             } catch (e) {
                 console.error("Failed to parse local storage state:", e);
@@ -363,6 +463,7 @@
                         mapData[key] = 0;
                     }
                 });
+                updateSoundDOM();
             }
 
             // DOM 状態の同期
@@ -420,6 +521,7 @@
             mapData[key] = (mapData[key] + 1) % STATES.length;
             updateCellDOM(mark, num);
             saveToLocalStorage();
+            playBeep('click');
         }
 
         function updateCellDOM(mark, num) {
@@ -482,10 +584,24 @@
 
         // アンテナタップ時処理
         function toggleAntenna(facility, num) {
-            antennaData[facility][num-1] = !antennaData[facility][num-1];
+            const wasAlive = antennaData[facility][num-1];
+            antennaData[facility][num-1] = !wasAlive;
             updateAntennaDOM(facility, num);
             updateAntennaCount();
             saveToLocalStorage();
+            
+            // 音声フィードバック
+            if (wasAlive) {
+                let count = 0;
+                ['a','b','c'].forEach(f => { antennaData[f].forEach(a => { if(a) count++; }); });
+                if (count <= 3) {
+                    playBeep('alert');
+                } else {
+                    playBeep('click');
+                }
+            } else {
+                playBeep('toggle');
+            }
         }
 
         function updateAntennaDOM(facility, num) {
@@ -502,7 +618,7 @@
             }
         }
 
-        // 残りアンテナ計算と勝利通知 (ハッカーテイストの警告文言)
+        // 残りアンテナ計算と勝利通知 (ハッカーテイストの警告文言 ＆ アラートパルスエフェクト)
         function updateAntennaCount() {
             let count = 0;
             ['a','b','c'].forEach(f => {
@@ -510,12 +626,22 @@
             });
             
             const el = document.getElementById('antenna-count');
+            const container = document.getElementById('main-container');
+            
             if(count <= 3) {
                 el.className = "text-[9px] font-mono mt-2 text-rose-500 font-bold tracking-wider animate-pulse";
                 el.innerText = `ALERT // CRITICAL ANOMALY // ACTIVE ANTENNAS: ${count}/9`;
+                
+                // コンテナ全体を赤く脈動（パルス）発光させる
+                container.classList.add('border-rose-500/40', 'shadow-[0_0_25px_rgba(244,63,94,0.15)]');
+                container.classList.remove('border-slate-700/40');
             } else {
                 el.className = "text-[9px] font-mono mt-2 text-emerald-400 font-bold tracking-wider";
                 el.innerText = `SYSTEM STATUS // ACTIVE ANTENNAS: ${count}/9`;
+                
+                // 通常の枠線に戻す
+                container.classList.remove('border-rose-500/40', 'shadow-[0_0_25px_rgba(244,63,94,0.15)]');
+                container.classList.add('border-slate-700/40');
             }
         }
 
@@ -524,6 +650,7 @@
             jammingData[dir] = !jammingData[dir];
             updateJammingDOM(dir);
             saveToLocalStorage();
+            playBeep('toggle');
         }
 
         function updateJammingDOM(dir) {
@@ -560,7 +687,10 @@
                 btn.classList.replace('border-slate-700', 'border-orange-500/40');
                 btn.classList.add('text-orange-400');
             }
-            if (!skipSave) saveToLocalStorage();
+            if (!skipSave) {
+                saveToLocalStorage();
+                playBeep('toggle');
+            }
         }
 
         // 自軍パスワード表示の切り替え
@@ -582,10 +712,14 @@
                 maskText.classList.remove('hidden');
                 btn.innerText = "DECRYPT";
                 btn.classList.replace('bg-orange-500/20', 'bg-slate-800');
-                btn.classList.replace('border-orange-500/40', 'border-slate-700');
+                btn.classList.replace('border-slate-700', 'border-orange-500/40');
                 btn.classList.remove('text-orange-400');
             }
-            if (!skipSave) saveToLocalStorage();
+            if (!skipSave) {
+                saveToLocalStorage();
+                if (passwordVisible) playBeep('decrypt');
+                else playBeep('toggle');
+            }
             updateAllCells();
         }
 
@@ -593,6 +727,7 @@
         function resetAll() {
             if(!confirm("すべての記録を初期化して、新しいゲームを始めますか？")) return;
             
+            playBeep('reset');
             localStorage.removeItem(STORAGE_KEY);
             
             marks.forEach(m => {
