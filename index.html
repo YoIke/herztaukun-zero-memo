@@ -112,7 +112,7 @@
             <div class="flex justify-between items-center mb-1">
                 <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider">REASONING MAP</span>
                 <button onclick="toggleMapVisibility()" id="btn-map-toggle" class="bg-slate-800 hover:bg-slate-750 text-slate-400 border border-slate-700 text-[9px] px-2 py-0.5 rounded transition font-mono uppercase tracking-wider">
-                    隠す
+                    MASK
                 </button>
             </div>
             
@@ -169,7 +169,7 @@
             <div class="flex justify-between items-center">
                 <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider">LOCAL DATA ENCRYPTION (FACILITY KEY)</span>
                 <button onclick="togglePasswordVisibility()" id="btn-pw-toggle" class="bg-slate-800 hover:bg-slate-750 text-slate-400 border border-slate-700 text-[9px] px-2 py-0.5 rounded transition font-mono uppercase tracking-wider">
-                    表示する
+                    DECRYPT
                 </button>
             </div>
             
@@ -521,14 +521,14 @@
             if(mapVisible) {
                 area.classList.remove('blur-md', 'pointer-events-none', 'opacity-10');
                 maskText.classList.add('hidden');
-                btn.innerText = "隠す";
+                btn.innerText = "MASK";
                 btn.classList.replace('bg-orange-500/20', 'bg-slate-800');
                 btn.classList.replace('border-orange-500/40', 'border-slate-700');
                 btn.classList.remove('text-orange-400');
             } else {
                 area.classList.add('blur-md', 'pointer-events-none', 'opacity-10');
                 maskText.classList.remove('hidden');
-                btn.innerText = "表示する";
+                btn.innerText = "REVEAL";
                 btn.classList.replace('bg-slate-800', 'bg-orange-500/20');
                 btn.classList.replace('border-slate-700', 'border-orange-500/40');
                 btn.classList.add('text-orange-400');
@@ -546,14 +546,14 @@
             if(passwordVisible) {
                 area.classList.remove('blur-md', 'pointer-events-none', 'opacity-20');
                 maskText.classList.add('hidden');
-                btn.innerText = "隠す";
+                btn.innerText = "ENCRYPT";
                 btn.classList.replace('bg-slate-800', 'bg-orange-500/20');
                 btn.classList.replace('border-slate-700', 'border-orange-500/40');
                 btn.classList.add('text-orange-400');
             } else {
                 area.classList.add('blur-md', 'pointer-events-none', 'opacity-20');
                 maskText.classList.remove('hidden');
-                btn.innerText = "表示する";
+                btn.innerText = "DECRYPT";
                 btn.classList.replace('bg-orange-500/20', 'bg-slate-800');
                 btn.classList.replace('border-orange-500/40', 'border-slate-700');
                 btn.classList.remove('text-orange-400');
