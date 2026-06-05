@@ -398,8 +398,8 @@
                 el.removeEventListener(eventType, saveToLocalStorage);
                 el.addEventListener(eventType, saveToLocalStorage);
                 
-                // 自軍基地が変更された場合はマップ表示を即座に同期
-                if (id.startsWith('my-pw-')) {
+                // 自軍基地または敵予想が変更された場合はマップ表示を即座に同期
+                if (id.startsWith('my-pw-') || id.startsWith('enemy-try-')) {
                     el.addEventListener('change', updateAllCells);
                 }
             });
@@ -448,6 +448,33 @@
                     const label = bases.join('+');
                     html += `<span class="absolute bottom-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-orange-500/90 text-slate-950 shadow-[0_0_8px_rgba(249,115,22,0.4)] leading-none">${label}</span>`;
                 }
+            }
+            
+            // 敵基地予想インジケータのオーバーレイ (1st: 右上赤, 2nd: 左上黄)
+            const t1a = document.getElementById('enemy-try-1-a').value;
+            const t1b = document.getElementById('enemy-try-1-b').value;
+            const t1c = document.getElementById('enemy-try-1-c').value;
+            const t2a = document.getElementById('enemy-try-2-a').value;
+            const t2b = document.getElementById('enemy-try-2-b').value;
+            const t2c = document.getElementById('enemy-try-2-c').value;
+            
+            let enemyBases1 = [];
+            if (t1a === key) enemyBases1.push('1A');
+            if (t1b === key) enemyBases1.push('1B');
+            if (t1c === key) enemyBases1.push('1C');
+            
+            let enemyBases2 = [];
+            if (t2a === key) enemyBases2.push('2A');
+            if (t2b === key) enemyBases2.push('2B');
+            if (t2c === key) enemyBases2.push('2C');
+            
+            if (enemyBases1.length > 0) {
+                const label = enemyBases1.join('+');
+                html += `<span class="absolute top-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-rose-500/95 text-slate-950 shadow-[0_0_8px_rgba(244,63,94,0.4)] leading-none">${label}</span>`;
+            }
+            if (enemyBases2.length > 0) {
+                const label = enemyBases2.join('+');
+                html += `<span class="absolute top-0.5 left-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-amber-500/95 text-slate-950 shadow-[0_0_8px_rgba(245,158,11,0.4)] leading-none">${label}</span>`;
             }
             
             el.innerHTML = html;
