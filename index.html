@@ -234,12 +234,68 @@
         let passwordVisible = false;
         let mapVisible = true;
 
+        // --- LOCAL STORAGE PERSISTENCE ---
+        const STORAGE_KEY = 'herztoukun_memo_state';
+
+        function saveToLocalStorage() {
+            const state = {
+                mapData,
+                antennaData,
+                jammingData,
+                passwordVisible,
+                mapVisible,
+                inputs: {
+                    myPwA: document.getElementById('my-pw-a').value,
+                    myPwB: document.getElementById('my-pw-b').value,
+                    myPwC: document.getElementById('my-pw-c').value,
+                    enemyTry1: document.getElementById('enemy-try-1').value,
+                    enemyTry2: document.getElementById('enemy-try-2').value,
+                    freeMemo: document.getElementById('free-memo').value
+                }
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return false;
+            try {
+                const state = JSON.parse(saved);
+                Object.assign(mapData, state.mapData);
+                Object.assign(antennaData, state.antennaData);
+                Object.assign(jammingData, state.jammingData);
+                passwordVisible = state.passwordVisible;
+                mapVisible = state.mapVisible;
+                
+                document.getElementById('my-pw-a').value = state.inputs.myPwA || '';
+                document.getElementById('my-pw-b').value = state.inputs.myPwB || '';
+                document.getElementById('my-pw-c').value = state.inputs.myPwC || '';
+                document.getElementById('enemy-try-1').value = state.inputs.enemyTry1 || '';
+                document.getElementById('enemy-try-2').value = state.inputs.enemyTry2 || '';
+                document.getElementById('free-memo').value = state.inputs.freeMemo || '';
+                return true;
+            } catch (e) {
+                console.error("Failed to parse local storage state:", e);
+                return false;
+            }
+        }
+
         // システム初期化
         function init() {
+            const hasSavedState = loadFromLocalStorage();
+
+            if (!hasSavedState) {
+                marks.forEach(m => {
+                    for(let i=1; i<=4; i++) {
+                        const key = `${m}-${i}`;
+                        mapData[key] = 0;
+                    }
+                });
+            }
+
+            // DOM 状態の同期
             marks.forEach(m => {
                 for(let i=1; i<=4; i++) {
-                    const key = `${m}-${i}`;
-                    if (mapData[key] === undefined) mapData[key] = 0;
                     updateCellDOM(m, i);
                 }
             });
@@ -247,7 +303,23 @@
                 for(let i=1; i<=3; i++) updateAntennaDOM(f, i);
             });
             ['N','E','W','S'].forEach(d => updateJammingDOM(d));
+            
+            // トグル状態の同期 (現在の値を反転させてからtoggleを呼ぶことで、正しい表示状態を適用)
+            passwordVisible = !passwordVisible;
+            togglePasswordVisibility(true); // init時セーブをスキップするフラグを渡す
+
+            mapVisible = !mapVisible;
+            toggleMapVisibility(true); // init時セーブをスキップするフラグを渡す
+
             updateAntennaCount();
+
+            // テキスト入力の自動保存イベントを登録
+            const textInputs = ['my-pw-a', 'my-pw-b', 'my-pw-c', 'enemy-try-1', 'enemy-try-2', 'free-memo'];
+            textInputs.forEach(id => {
+                const el = document.getElementById(id);
+                el.removeEventListener('input', saveToLocalStorage);
+                el.addEventListener('input', saveToLocalStorage);
+            });
         }
 
         // マップセルのタップ時処理
@@ -255,6 +327,7 @@
             const key = `${mark}-${num}`;
             mapData[key] = (mapData[key] + 1) % STATES.length;
             updateCellDOM(mark, num);
+            saveToLocalStorage();
         }
 
         function updateCellDOM(mark, num) {
@@ -273,6 +346,7 @@
             antennaData[facility][num-1] = !antennaData[facility][num-1];
             updateAntennaDOM(facility, num);
             updateAntennaCount();
+            saveToLocalStorage();
         }
 
         function updateAntennaDOM(facility, num) {
@@ -310,6 +384,7 @@
         function toggleJam(dir) {
             jammingData[dir] = !jammingData[dir];
             updateJammingDOM(dir);
+            saveToLocalStorage();
         }
 
         function updateJammingDOM(dir) {
@@ -325,7 +400,7 @@
         }
 
         // 推理マップ表示の切り替え
-        function toggleMapVisibility() {
+        function toggleMapVisibility(skipSave = false) {
             mapVisible = !mapVisible;
             const area = document.getElementById('map-area');
             const btn = document.getElementById('btn-map-toggle');
@@ -346,10 +421,11 @@
                 btn.classList.replace('border-slate-700', 'border-orange-500/40');
                 btn.classList.add('text-orange-400');
             }
+            if (!skipSave) saveToLocalStorage();
         }
 
         // 自軍パスワード表示の切り替え
-        function togglePasswordVisibility() {
+        function togglePasswordVisibility(skipSave = false) {
             passwordVisible = !passwordVisible;
             const area = document.getElementById('password-area');
             const btn = document.getElementById('btn-pw-toggle');
@@ -370,11 +446,14 @@
                 btn.classList.replace('border-orange-500/40', 'border-slate-700');
                 btn.classList.remove('text-orange-400');
             }
+            if (!skipSave) saveToLocalStorage();
         }
 
         // オールリセット
         function resetAll() {
             if(!confirm("すべての記録を初期化して、新しいゲームを始めますか？")) return;
+            
+            localStorage.removeItem(STORAGE_KEY);
             
             marks.forEach(m => {
                 for(let i=1; i<=4; i++) mapData[`${m}-${i}`] = 0;
@@ -392,10 +471,10 @@
             document.getElementById('free-memo').value = '';
             
             passwordVisible = true;
-            togglePasswordVisibility();
+            togglePasswordVisibility(true);
 
             mapVisible = false;
-            toggleMapVisibility();
+            toggleMapVisibility(true);
 
             init();
         }
