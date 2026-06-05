@@ -433,7 +433,7 @@
             
             let html = state.html;
             
-            // 自軍基地インジケータのオーバーレイ (パスワード表示ONの時のみ)
+            // 自軍基地インジケータのオーバーレイ (パスワード表示ONの時のみ) - シアン(水色)
             if (passwordVisible) {
                 const pwA = document.getElementById('my-pw-a').value;
                 const pwB = document.getElementById('my-pw-b').value;
@@ -446,11 +446,11 @@
                 
                 if (bases.length > 0) {
                     const label = bases.join('+');
-                    html += `<span class="absolute bottom-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-orange-500/90 text-slate-950 shadow-[0_0_8px_rgba(249,115,22,0.4)] leading-none">${label}</span>`;
+                    html += `<span class="absolute bottom-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-cyan-400 text-slate-950 shadow-[0_0_8px_rgba(34,211,238,0.4)] leading-none">${label}</span>`;
                 }
             }
             
-            // 敵基地予想インジケータのオーバーレイ (1st: 右上赤, 2nd: 左上黄)
+            // 敵基地予想インジケータのオーバーレイ (1st: 右上赤, 2nd: 左上オレンジ)
             const t1a = document.getElementById('enemy-try-1-a').value;
             const t1b = document.getElementById('enemy-try-1-b').value;
             const t1c = document.getElementById('enemy-try-1-c').value;
@@ -470,11 +470,11 @@
             
             if (enemyBases1.length > 0) {
                 const label = enemyBases1.join('+');
-                html += `<span class="absolute top-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-rose-500/95 text-slate-950 shadow-[0_0_8px_rgba(244,63,94,0.4)] leading-none">${label}</span>`;
+                html += `<span class="absolute top-0.5 right-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-red-500/95 text-slate-950 shadow-[0_0_8px_rgba(239,68,68,0.4)] leading-none">${label}</span>`;
             }
             if (enemyBases2.length > 0) {
                 const label = enemyBases2.join('+');
-                html += `<span class="absolute top-0.5 left-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-amber-500/95 text-slate-950 shadow-[0_0_8px_rgba(245,158,11,0.4)] leading-none">${label}</span>`;
+                html += `<span class="absolute top-0.5 left-0.5 text-[7px] font-mono font-bold px-1 py-0.5 rounded bg-orange-500/95 text-slate-950 shadow-[0_0_8px_rgba(249,115,22,0.4)] leading-none">${label}</span>`;
             }
             
             el.innerHTML = html;
