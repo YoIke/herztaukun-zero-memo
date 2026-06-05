@@ -60,44 +60,51 @@
         </div>
 
         <div>
-            <div class="text-[10px] font-bold text-slate-400 mb-1">推理マップ (タップでメモ状態切替)</div>
-            <div class="grid grid-cols-5 gap-1 bg-slate-950 p-2 rounded border border-slate-800 text-center text-sm font-bold">
-                <div class="text-slate-500 text-[10px] flex items-center justify-center font-normal">マーク</div>
-                <div class="text-slate-400 flex items-center justify-center">1</div>
-                <div class="text-slate-400 flex items-center justify-center">2</div>
-                <div class="text-slate-400 flex items-center justify-center">3</div>
-                <div class="text-slate-400 flex items-center justify-center">4</div>
-
-                <div class="text-green-500 text-lg flex items-center justify-center">♣</div>
-                <button id="cell-C-1" onclick="cycleCell('C', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-C-2" onclick="cycleCell('C', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-C-3" onclick="cycleCell('C', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-C-4" onclick="cycleCell('C', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-
-                <div class="text-red-400 text-lg flex items-center justify-center">♦</div>
-                <button id="cell-D-1" onclick="cycleCell('D', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-D-2" onclick="cycleCell('D', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-D-3" onclick="cycleCell('D', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-D-4" onclick="cycleCell('D', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-
-                <div class="text-red-500 text-lg flex items-center justify-center">♥</div>
-                <button id="cell-H-1" onclick="cycleCell('H', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-H-2" onclick="cycleCell('H', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-H-3" onclick="cycleCell('H', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-H-4" onclick="cycleCell('H', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-
-                <div class="text-indigo-400 text-lg flex items-center justify-center">♠</div>
-                <button id="cell-S-1" onclick="cycleCell('S', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-S-2" onclick="cycleCell('S', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-S-3" onclick="cycleCell('S', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
-                <button id="cell-S-4" onclick="cycleCell('S', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] font-bold text-slate-400">推理マップ (タップでメモ状態切替)</span>
+                <button onclick="toggleMapVisibility()" id="btn-map-toggle" class="bg-slate-700 hover:bg-slate-600 text-[10px] px-2 py-0.5 rounded border border-slate-600 transition">
+                    隠す
+                </button>
             </div>
-            <div class="flex justify-between text-[10px] text-slate-400 px-1 mt-1 font-mono">
-                <span>[無印]未確定</span>
-                <span>[灰/×]安全</span>
-                <span>[黄/？]候補</span>
-                <span>[赤/！]確定</span>
-                <span>[青/👣]通過</span>
+            <div id="map-area" class="transition duration-300">
+                <div class="grid grid-cols-5 gap-1 bg-slate-950 p-2 rounded border border-slate-800 text-center text-sm font-bold">
+                    <div class="text-slate-500 text-[10px] flex items-center justify-center font-normal">マーク</div>
+                    <div class="text-slate-400 flex items-center justify-center">1</div>
+                    <div class="text-slate-400 flex items-center justify-center">2</div>
+                    <div class="text-slate-400 flex items-center justify-center">3</div>
+                    <div class="text-slate-400 flex items-center justify-center">4</div>
+
+                    <div class="text-green-500 text-lg flex items-center justify-center">♣</div>
+                    <button id="cell-C-1" onclick="cycleCell('C', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-C-2" onclick="cycleCell('C', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-C-3" onclick="cycleCell('C', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-C-4" onclick="cycleCell('C', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+
+                    <div class="text-red-400 text-lg flex items-center justify-center">♦</div>
+                    <button id="cell-D-1" onclick="cycleCell('D', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-D-2" onclick="cycleCell('D', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-D-3" onclick="cycleCell('D', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-D-4" onclick="cycleCell('D', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+
+                    <div class="text-red-500 text-lg flex items-center justify-center">♥</div>
+                    <button id="cell-H-1" onclick="cycleCell('H', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-H-2" onclick="cycleCell('H', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-H-3" onclick="cycleCell('H', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-H-4" onclick="cycleCell('H', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+
+                    <div class="text-indigo-400 text-lg flex items-center justify-center">♠</div>
+                    <button id="cell-S-1" onclick="cycleCell('S', 1)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-S-2" onclick="cycleCell('S', 2)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-S-3" onclick="cycleCell('S', 3)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                    <button id="cell-S-4" onclick="cycleCell('S', 4)" class="grid-cell h-10 bg-slate-800 rounded border border-slate-700 flex items-center justify-center text-xs"></button>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 px-1 mt-1 font-mono">
+                    <span>[無印]未確定</span>
+                    <span>[灰/×]安全</span>
+                    <span>[黄/？]候補</span>
+                    <span>[赤/！]確定</span>
+                    <span>[青/👣]通過</span>
+                </div>
             </div>
         </div>
 
@@ -161,6 +168,7 @@
 
         const jammingData = { N: false, E: false, W: false, S: false };
         let passwordVisible = false;
+        let mapVisible = true;
 
         // システム初期化
         function init() {
@@ -252,6 +260,23 @@
             }
         }
 
+        // 推理マップ表示の切り替え
+        function toggleMapVisibility() {
+            mapVisible = !mapVisible;
+            const area = document.getElementById('map-area');
+            const btn = document.getElementById('btn-map-toggle');
+            
+            if(mapVisible) {
+                area.classList.remove('blur-md', 'pointer-events-none');
+                btn.innerText = "隠す";
+                btn.classList.replace('bg-orange-700', 'bg-slate-700');
+            } else {
+                area.classList.add('blur-md', 'pointer-events-none');
+                btn.innerText = "表示する";
+                btn.classList.replace('bg-slate-700', 'bg-orange-700');
+            }
+        }
+
         // 自軍パスワード表示の切り替え
         function togglePasswordVisibility() {
             passwordVisible = !passwordVisible;
@@ -290,6 +315,9 @@
             
             passwordVisible = true;
             togglePasswordVisibility();
+
+            mapVisible = false;
+            toggleMapVisibility();
 
             init();
         }
